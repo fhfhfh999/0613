@@ -68,25 +68,6 @@ npm run dev        # 文件改动自动重启（node --watch）
 - 写操作（POST/PUT/DELETE）需要 Authorization: Bearer <token>；
 - PI 专属接口（如创建研究项目、创建用户）对 CRC 返回 403。
  
-## 主要功能与对应 API
- 
-| 功能 | 方法 | 路径 | 鉴权 |
-|------|------|------|------|
-| 健康检查 | GET | /api/health | 否 |
-| 登录 | POST | /api/auth/login | 否 |
-| 当前用户 | GET | /api/auth/me | 是 |
-| 用户管理 | POST/GET | /api/users | PI |
-| 研究项目 CRUD | GET/POST/PUT/DELETE | /api/studies[/:id] | 写需 PI |
-| 受试者 CRUD | … | /api/studies/:id/subjects | 写需鉴权 |
-| 生成访视计划 | POST | /api/subjects/:id/visits/generate | 是 |
-| 回填实际日期 | POST | /api/visits/:id/fill-actual | 是 |
-| 日历视图 | GET | /api/visits/calendar?start_date&end_date&study_id | 否 |
-| 今日/明日/本周提醒 | GET | /api/reminders/today\|tomorrow\|week | 否 |
-| 取消提醒（脱落） | POST | /api/subjects/:id/cancel-reminders | 是 |
-| 方案偏离检测 | POST | /api/deviations/auto-detect | 是 |
-| 偏离列表/汇总 | GET | /api/deviations[/:id] /summary | 否 |
-| Excel 导入受试者 | POST | /api/studies/:id/import-subjects | 是 |
-| Excel 导出受试者 | GET | /api/studies/:id/export/subjects | 是 |
 
 ## 访视窗口规则（示例）
  
@@ -100,13 +81,6 @@ npm run dev        # 文件改动自动重启（node --watch）
 - 落在窗口内 → 状态置为「已完成」，并以该日期为基准重算后续访视计划；
 - 超出窗口 → 状态置为「已偏离」，自动生成方案偏离记录。
  
-## 测试
- 
-```bash
-npm test                # 运行全部 154 个用例
-npx jest tests/api.test.js   # 仅运行 API 集成测试
-npm run test:coverage   # 覆盖率报告
-```
  
 测试使用独立的临时数据库（os.tmpdir()/followup-*-*/test.db），不会污染 data/followup.db。
  
@@ -116,6 +90,4 @@ npm run test:coverage   # 覆盖率报告
 2. 数据库锁定/损坏：停止服务后删除 data/followup.db，再执行 npm run init-db。
 3. Node 版本提示 SQLite 实验性警告：可忽略；如需消除，使用 Node 22+ 并配合 --experimental-sqlite。
  
-## 清理说明
- 
-项目根目录下历史遗留的无效文件 $null 已删除；data/ 目录仅保留运行期生成的 SQLite 数据库。
+
