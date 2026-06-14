@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>受试者随访提醒系统</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div class="header-row">
+      <h1>受试者随访提醒与访视窗口计算系统</h1>
+      <div class="header-right">
+        <span id="userInfo" class="user-info"></span>
+        <button id="logoutBtn" class="btn btn-sm btn-warning">退出登录</button>
+      </div>
+    </div>
+    <nav id="nav">
+      <button data-view="dashboard" class="active">仪表盘</button>
+      <button data-view="studies">研究项目</button>
+      <button data-view="subjects">受试者</button>
+      <button data-view="visits">访视计划</button>
+      <button data-view="calendar">📅 日历视图</button>
+      <button data-view="reminders">提醒清单</button>
+      <button data-view="deviations">方案偏离</button>
+      <button data-view="import">批量导入</button>
+      <button data-view="export">📊 数据导出</button>
+      <button data-view="users" class="pi-only">👤 用户管理</button>
+      <button data-view="login" style="margin-left:auto;">🔑 登录</button>
+    </nav>
+  </header>
+
+  <main id="app"></main>
+
+  <script src="app.js"></script>
+  <script>
+    // 隐藏 PI 专属菜单（CRC 登录后）
+    function refreshMenuVisibility() {
+      let isPi = false;
+      try {
+        const u = JSON.parse(localStorage.getItem('followup_user') || 'null');
+        isPi = !!u && u.role === 'pi';
+      } catch (e) {}
+      document.querySelectorAll('.pi-only').forEach((el) => {
+        el.style.display = isPi ? '' : 'none';
+      });
+    }
+    document.addEventListener('DOMContentLoaded', refreshMenuVisibility);
+    // 监听登录/登出后刷新菜单可见性
+    const origSetItem = localStorage.setItem.bind(localStorage);
+    localStorage.setItem = function (k, v) {
+      origSetItem(k, v);
+      if (k === 'followup_user') refreshMenuVisibility();
+    };
+    const origRemoveItem = localStorage.removeItem.bind(localStorage);
+    localStorage.removeItem = function (k) {
+      origRemoveItem(k);
+      if (k === 'followup_user') refreshMenuVisibility();
+    };
+  </script>
+</body>
+</html>
